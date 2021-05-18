@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import styled from "styled-components";
 import { Canvas } from "./components";
 
@@ -7,9 +7,19 @@ const App = () => {
   padding: 4em;
   background: papayawhip;
 `;
+  const [drawposition, setDrawposition] = useState({ x: 50, y: 100 })
   return (
     <Wrapper >
-      <Canvas />
+      <Canvas
+        textColor={"#8D7ADF"}
+        onchange={(e) => {
+          console.error({ e })
+          setDrawposition({
+            x: drawposition.x + 1, Y: drawposition.y + 10
+          })
+        }}
+        drawposition={drawposition}
+      />
     </Wrapper>
   );
 }

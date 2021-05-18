@@ -1,20 +1,17 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect } from 'react'
 import styled from "styled-components";
-
 export const Canvas = (props) => {
     const Container = styled.div`
-    width:700px;
-    height:500px;
-    background-color:white;
-    margin:auto;
-    `
-    const canvasRef = useRef(null)
+                        width:700px;
+                        height:500px;
+                        background-color:red;
+                        margin:auto; `
 
-    const [drawPosition, setdrawPosition] = useState({ })
-    const draw = ctx => {
-        ctx.fillStyle = '#0000ff'
+    const canvasRef = useRef(null)
+    var draw = ctx => {
+        ctx.fillStyle = props?.textColor || '#0000ff'
         ctx.beginPath()
-        ctx.arc(drawPosition?.x, drawPosition?.y, 20, 0, 2 * Math.PI)
+        ctx.arc(props?.drawposition?.x, props?.drawposition?.y, 20, 0, 2 * Math.PI)
         ctx.fill()
     }
 
@@ -22,18 +19,14 @@ export const Canvas = (props) => {
         const canvas = canvasRef.current
         const context = canvas.getContext('2d')
         draw(context)
-    }, [draw, drawPosition])
-
+    }, [draw])
 
     return (
         <Container >
             <canvas ref={canvasRef} {...props}
-                onMouseMove={(e) => {
-                    console.error({ e })
-                    setdrawPosition({
-                        x: 50, y: 100
-                    })
-                }} />
+                onMouseDown={props?.onchange}
+                style={{ width: "100%", height: "100%", backgroundColor: "white" }}
+            />
         </Container>
     )
 }
