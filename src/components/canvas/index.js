@@ -12,7 +12,6 @@ export const Canvas = (props) => {
     var prevX = 0
     var prevY = 0
     var draw = (ctx, x = 0, y = 0) => {
-        // ctx.fillStyle = props?.textColor || '#0000ff'
         ctx.beginPath();
         !prevX && (prevX = x)
         !prevY && (prevY = y)
@@ -34,8 +33,15 @@ export const Canvas = (props) => {
         isdraw && draw(context, e.offsetX, e.offsetY)
     }
     const stopDrawing = (e) => {
+        prevX = 0
+        prevY = 0
         isdraw = false
     }
+    const clearCanvas = (e) => {
+        const canvas = canvasRef.current
+        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+    }
+    
     useEffect(() => {
         const canvas = canvasRef.current
         const context = canvas.getContext('2d')
@@ -43,15 +49,17 @@ export const Canvas = (props) => {
         canvas.addEventListener("mousemove", (e) => { drawNormal(e, context) });
         canvas.addEventListener("mouseup", stopDrawing);
         canvas.addEventListener("mouseout", stopDrawing);
-        // draw(context)
     }, [draw])
 
     return (
         <Container >
             <canvas ref={canvasRef} {...props}
-                // onMouseDown={props?.onchange}
                 style={{ width: "100%", height: "100%", backgroundColor: "white" }}
             />
+            <button onClick={(e) => {
+                console.error("download")
+            }}>Download</button>
+            <button onClick={clearCanvas}>Clear</button>
         </Container>
     )
 }
