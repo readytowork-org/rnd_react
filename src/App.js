@@ -11,7 +11,7 @@ const App = () => {
   return (
     <Wrapper >
       <Canvas
-        textColor={"#8D7ADF"}
+        textColor={"#2C3E50"}
         onchange={(e) => {
           console.error({ e })
           setDrawposition({

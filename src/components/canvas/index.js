@@ -8,7 +8,8 @@ export const Canvas = (props) => {
                         margin:auto; `
 
     const canvasRef = useRef(null)
-    var isdraw = false
+    var canDraw = false
+    var canDownload = false
     var prevX = 0
     var prevY = 0
     var draw = (ctx, x = 0, y = 0) => {
@@ -21,46 +22,58 @@ export const Canvas = (props) => {
         ctx.lineWidth = 2;
         ctx.stroke();
         ctx.closePath();
-        ctx.fill()
         prevX = x;
         prevY = y
     }
     const handleMouseDown = (e) => {
-        console.error({ e })
-        isdraw = true
+        prevX = e.layerX
+        prevY = e.layerY
+        canDraw = true
     }
+
     const drawNormal = (e, context) => {
-        isdraw && draw(context, e.offsetX, e.offsetY)
+        if (canDraw) {
+            canDownload = true
+            draw(context, e.layerX, e.layerY)
+        }
     }
+
     const stopDrawing = (e) => {
-        prevX = 0
-        prevY = 0
-        isdraw = false
+        canDraw = false
     }
     const clearCanvas = (e) => {
         const canvas = canvasRef.current
         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+        canDownload = false
     }
-
+    const setpoint = (e) => {
+        prevX = e.layerX
+        prevY = e.layerY
+        canDraw = false
+    }
     const download = (e) => {
-        var download = document.getElementById("download");
-        var image = document.getElementById("canvas").toDataURL("image/png")
-            .replace("image/png", "image/octet-stream");
-        download.setAttribute("href", image);
+        if (canDownload) {
+            var download = document.getElementById("download");
+            var image = document.getElementById("canvas").toDataURL("image/png")
+                .replace("image/png", "image/octet-stream");
+            download.setAttribute("href", image);
+        }
     }
     useEffect(() => {
         const canvas = canvasRef.current
         const context = canvas.getContext('2d')
         canvas.addEventListener("mousedown", handleMouseDown)
         canvas.addEventListener("mousemove", (e) => { drawNormal(e, context) });
-        canvas.addEventListener("mouseup", stopDrawing);
-        canvas.addEventListener("mouseout", stopDrawing);
+        canvas.addEventListener("mouseup", setpoint);
+        // canvas.addEventListener("mouseup", setpoint);
+        canvas.addEventListener("mouseout", setpoint);
     }, [draw])
-
     return (
         <Container >
             <canvas ref={canvasRef} {...props}
-                style={{ width: "100%", height: "100%", backgroundColor: "white" }}
+                style={{ width: "700px", height: "500px", backgroundColor: "white" }}
+                width="700"
+                height="500"
                 id="canvas"
             />
             <a id="download">
