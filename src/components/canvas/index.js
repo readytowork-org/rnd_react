@@ -30,16 +30,14 @@ export const Canvas = (props) => {
         prevY = e.layerY
         canDraw = true
     }
-
+    const handleUp = (e) => {
+        canDraw = false
+    }
     const drawNormal = (e, context) => {
         if (canDraw) {
             canDownload = true
             draw(context, e.layerX, e.layerY)
         }
-    }
-
-    const stopDrawing = (e) => {
-        canDraw = false
     }
     const clearCanvas = (e) => {
         const canvas = canvasRef.current
@@ -47,9 +45,8 @@ export const Canvas = (props) => {
         canDownload = false
     }
     const setpoint = (e) => {
-        prevX = e.layerX
-        prevY = e.layerY
-        canDraw = false
+        prevX = 0
+        prevY = 0
     }
     const download = (e) => {
         if (canDownload) {
@@ -64,10 +61,10 @@ export const Canvas = (props) => {
         const context = canvas.getContext('2d')
         canvas.addEventListener("mousedown", handleMouseDown)
         canvas.addEventListener("mousemove", (e) => { drawNormal(e, context) });
-        canvas.addEventListener("mouseup", setpoint);
-        // canvas.addEventListener("mouseup", setpoint);
+        canvas.addEventListener("mouseup", handleUp);
         canvas.addEventListener("mouseout", setpoint);
     }, [draw])
+
     return (
         <Container >
             <canvas ref={canvasRef} {...props}
