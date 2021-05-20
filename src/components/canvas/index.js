@@ -8,30 +8,40 @@ export const Canvas = (props) => {
                         margin:auto; `
 
     const canvasRef = useRef(null)
+    var isdraw = false
+    var prevX = 0
+    var prevY = 0
     var draw = (ctx, x = 0, y = 0) => {
-        ctx.fillStyle = props?.textColor || '#0000ff'
-        ctx.beginPath()
-        ctx.arc(x, y, 1, 0, 90)
+        // ctx.fillStyle = props?.textColor || '#0000ff'
+        ctx.beginPath();
+        !prevX && (prevX = x)
+        !prevY && (prevY = y)
+        ctx.moveTo(prevX, prevY);
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = props?.textColor || '#0000ff'
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.closePath();
         ctx.fill()
+        prevX = x;
+        prevY = y
     }
     const handleMouseDown = (e) => {
-        console.error({ e, "action": "down" })
+        console.error({ e })
+        isdraw = true
     }
     const drawNormal = (e, context) => {
-        console.error({ e, "action": "draw" })
-        draw(context, e.offsetX, e.offsetY)
+        isdraw && draw(context, e.offsetX, e.offsetY)
     }
     const stopDrawing = (e) => {
-        console.error({ e })
+        isdraw = false
     }
-
     useEffect(() => {
         const canvas = canvasRef.current
         const context = canvas.getContext('2d')
-        // canvas.addEventListener("mousedown", handleMouseDown)
-        // canvas.addEventListener("mousemove", drawNormal);
+        canvas.addEventListener("mousedown", handleMouseDown)
         canvas.addEventListener("mousemove", (e) => { drawNormal(e, context) });
-        // canvas.addEventListener("mouseup", stopDrawing);
+        canvas.addEventListener("mouseup", stopDrawing);
         canvas.addEventListener("mouseout", stopDrawing);
         // draw(context)
     }, [draw])
