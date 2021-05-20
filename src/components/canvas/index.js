@@ -41,7 +41,13 @@ export const Canvas = (props) => {
         const canvas = canvasRef.current
         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
     }
-    
+
+    const download = (e) => {
+        var download = document.getElementById("download");
+        var image = document.getElementById("canvas").toDataURL("image/png")
+            .replace("image/png", "image/octet-stream");
+        download.setAttribute("href", image);
+    }
     useEffect(() => {
         const canvas = canvasRef.current
         const context = canvas.getContext('2d')
@@ -55,10 +61,11 @@ export const Canvas = (props) => {
         <Container >
             <canvas ref={canvasRef} {...props}
                 style={{ width: "100%", height: "100%", backgroundColor: "white" }}
+                id="canvas"
             />
-            <button onClick={(e) => {
-                console.error("download")
-            }}>Download</button>
+            <a id="download">
+                <button onClick={download}>Download</button>
+            </a>
             <button onClick={clearCanvas}>Clear</button>
         </Container>
     )
