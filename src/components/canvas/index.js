@@ -1,5 +1,6 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import styled from "styled-components";
+
 export const Canvas = (props) => {
     const Container = styled.div`
                         width:700px;
@@ -8,6 +9,7 @@ export const Canvas = (props) => {
                         margin:auto; `
 
     const canvasRef = useRef(null)
+    const [cantype, setcantype] = useState(false)
     var canDraw = false
     var canDownload = false
     var prevX = 0
@@ -34,7 +36,7 @@ export const Canvas = (props) => {
         canDraw = false
     }
     const drawNormal = (e, context) => {
-        if (canDraw) {
+        if (canDraw && !cantype) {
             canDownload = true
             draw(context, e.layerX, e.layerY)
         }
@@ -43,6 +45,7 @@ export const Canvas = (props) => {
         const canvas = canvasRef.current
         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
         canDownload = false
+        document.getElementById("typeid").value=""
     }
     const setpoint = (e) => {
         prevX = 0
@@ -56,6 +59,25 @@ export const Canvas = (props) => {
             download.setAttribute("href", image);
         }
     }
+
+    const TypeClick = (e) => {
+        const canvas = canvasRef.current
+        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+        setcantype(t => !t)
+    }
+    const typechange = (e) => {
+        const canvas = canvasRef.current
+        var ctx = canvas.getContext('2d')
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.font = "30px Homemade Apple, cursive";
+        ctx.textAlign = "center";
+        ctx.fillText(e.target.value, 350, 250);
+        if (e.target.value) {
+            canDownload = true
+        } else {
+            canDownload = false
+        }
+    }
     useEffect(() => {
         const canvas = canvasRef.current
         const context = canvas.getContext('2d')
@@ -65,6 +87,8 @@ export const Canvas = (props) => {
         canvas.addEventListener("mouseout", setpoint);
     }, [draw])
 
+    useEffect(() => {
+    }, [cantype])
     return (
         <Container >
             <canvas ref={canvasRef} {...props}
@@ -73,6 +97,8 @@ export const Canvas = (props) => {
                 height="500"
                 id="canvas"
             />
+            <input type="text" id="typeid" disabled={!cantype} onChange={typechange} placeholder="Pradip Kharal"/>
+            <button onClick={TypeClick} >{!cantype ? "Type" : "Draw"} </button>
             <a id="download">
                 <button onClick={download}>Download</button>
             </a>
